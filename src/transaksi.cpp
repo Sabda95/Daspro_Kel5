@@ -48,7 +48,7 @@ void transaksiPenjualan() {
     cout << "Transaksi berhasil!\n";
 }
 
-// tambah barang (fitur temanmu)
+// tambah barang (fitur naila)
 void tambahBarang() {
     cout << "Nama barang: ";
     cin >> namaBarang[jumlahBarang];
