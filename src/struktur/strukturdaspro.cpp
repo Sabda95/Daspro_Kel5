@@ -12,6 +12,7 @@ int jumlahBarang = 0;
 void tambahBarang();
 void lihatBarang();
 void updateStok();
+void editBarang();
 void transaksi();
 
 int main() {
@@ -29,7 +30,7 @@ int main() {
     jumlahBarang = 2;
     
     do {
-        system; // Untuk clear screen (Windows)
+        system("cls"); // Untuk clear screen (Windows)
         
         cout << "================================" << endl;
         cout << "     TOKO GROSIR     " << endl;
@@ -37,8 +38,9 @@ int main() {
         cout << "1. Tambah Barang Baru" << endl;
         cout << "2. Lihat Semua Barang" << endl;
         cout << "3. Update Stok Barang" << endl;
-        cout << "4. Transaksi Penjualan" << endl;
-        cout << "5. Keluar" << endl;
+        cout << "4. Edit Barang" << endl;
+        cout << "5. Transaksi Penjualan" << endl;
+        cout << "6. Keluar" << endl;
         cout << "================================" << endl;
         cout << "Pilihan: ";
         cin >> pilihan;
@@ -47,8 +49,9 @@ int main() {
             case 1: tambahBarang(); break;
             case 2: lihatBarang(); break;
             case 3: updateStok(); break;
-            case 4: transaksi(); break;
-            case 5: cout << "Program selesai!" << endl; break;
+            case 4: editBarang(); break;
+            case 5: transaksi(); break;
+            case 6: cout << "Program selesai!" << endl; break;
             default: cout << "Pilihan salah!" << endl;
         }
         
@@ -56,7 +59,7 @@ int main() {
         cin.ignore();
         cin.get();
         
-    } while(pilihan != 5);
+    } while(pilihan != 6);
     
     return 0;
 }
@@ -128,28 +131,105 @@ void updateStok() {
     cout << "Stok berhasil diupdate!" << endl;
 }
 
-void transaksi() {
-    string nama;
-    int indeks = -1;
-    int jumlah;
+void editBarang() {
+    int nomorBarang;
     
-    cout << "\n-- TRANSAKSI --" << endl;
-    cout << "Nama barang: ";
-    cin.ignore();
-    getline(cin, nama);
+    cout << "\n-- EDIT BARANG --" << endl;
     
-    for(int i = 0; i < jumlahBarang; i++) {
-        if(namaBarang[i] == nama) {
-            indeks = i;
-            break;
-        }
-    }
-    
-    if(indeks == -1) {
-        cout << "Barang tidak ditemukan!" << endl;
+    if(jumlahBarang == 0) {
+        cout << "Tidak ada barang di gudang." << endl;
         return;
     }
     
+    // Tampilkan daftar barang
+    cout << "Daftar Barang:" << endl;
+    for(int i = 0; i < jumlahBarang; i++) {
+        cout << (i+1) << ". " << namaBarang[i] 
+             << " - Rp" << hargaBarang[i] 
+             << " (Stok: " << stokBarang[i] << ")" << endl;
+    }
+    
+    cout << "\nMasukkan nomor barang yang ingin diedit: ";
+    cin >> nomorBarang;
+    
+    // Validasi nomor barang
+    if(nomorBarang < 1 || nomorBarang > jumlahBarang) {
+        cout << "Nomor barang tidak valid!" << endl;
+        return;
+    }
+    
+    int indeks = nomorBarang - 1;
+    
+    cout << "\nData barang sekarang:" << endl;
+    cout << "Nama: " << namaBarang[indeks] << endl;
+    cout << "Harga: Rp" << hargaBarang[indeks] << endl;
+    
+    cout << "\n-- Masukkan data baru --" << endl;
+    cout << "Nama Barang (ketik 0 untuk hapus barang): ";
+    cin.ignore();
+    string namaBaru;
+    getline(cin, namaBaru);
+    
+    // Cek apakah user ingin hapus barang
+    if(namaBaru == "0") {
+        char konfirmasi;
+        cout << "Yakin ingin menghapus barang ini? (y/n): ";
+        cin >> konfirmasi;
+        
+        if(konfirmasi == 'y' || konfirmasi == 'Y') {
+            // Geser semua barang setelah indeks ke kiri
+            for(int i = indeks; i < jumlahBarang - 1; i++) {
+                namaBarang[i] = namaBarang[i + 1];
+                hargaBarang[i] = hargaBarang[i + 1];
+                stokBarang[i] = stokBarang[i + 1];
+            }
+            jumlahBarang--;
+            cout << "Barang berhasil dihapus!" << endl;
+        } else {
+            cout << "Penghapusan dibatalkan!" << endl;
+        }
+        return;
+    }
+    
+    namaBarang[indeks] = namaBaru;
+    
+    cout << "Harga: ";
+    cin >> hargaBarang[indeks];
+    
+    cout << "Barang berhasil diedit!" << endl;
+}
+
+void transaksi() {
+    int nomorBarang;
+    int jumlah;
+    
+    cout << "\n-- TRANSAKSI --" << endl;
+    
+    // Tampilkan daftar barang terlebih dahulu
+    if(jumlahBarang == 0) {
+        cout << "Tidak ada barang di gudang." << endl;
+        return;
+    }
+    
+    cout << "Daftar Barang:" << endl;
+    for(int i = 0; i < jumlahBarang; i++) {
+        cout << (i+1) << ". " << namaBarang[i] 
+             << " - Rp" << hargaBarang[i] 
+             << " (Stok: " << stokBarang[i] << ")" << endl;
+    }
+    
+    cout << "\nMasukkan nomor barang: ";
+    cin >> nomorBarang;
+    
+    // Validasi nomor barang
+    if(nomorBarang < 1 || nomorBarang > jumlahBarang) {
+        cout << "Nomor barang tidak valid!" << endl;
+        return;
+    }
+    
+    int indeks = nomorBarang - 1; // Convert ke index array (mulai dari 0)
+    
+    cout << "Barang: " << namaBarang[indeks] << endl;
     cout << "Harga: Rp" << hargaBarang[indeks] << endl;
     cout << "Stok: " << stokBarang[indeks] << endl;
     cout << "Jumlah beli: ";
